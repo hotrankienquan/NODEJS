@@ -1,5 +1,4 @@
 import db from '../models/index';
-import user from '../models/user';
 import CRUDService from '../services/CRUDService';
 // day la controller home
 let getHomePage = async (req, res) => {
@@ -70,6 +69,19 @@ let putCRUD = async (req, res) => {
 		dataTable: allUsers
 	})
 }
+let deleteCRUD = async (req, res) => {
+	let id = req.query.id;
+	// cái gì cần thao tác đến db, cần tốn thời gian => async await
+	if (id) {
+
+		await CRUDService.deleteUserById(id);
+		return res.send('delete user success')
+	}
+	else {
+		return res.send('user not found')
+	}
+
+}
 module.exports = {
 	getHomePage: getHomePage,
 	getAboutPage: getAboutPage,
@@ -77,5 +89,6 @@ module.exports = {
 	postCRUD: postCRUD,
 	displayGetCRUD: displayGetCRUD,
 	getEditCRUD: getEditCRUD,
-	putCRUD: putCRUD
+	putCRUD: putCRUD,
+	deleteCRUD: deleteCRUD
 }
