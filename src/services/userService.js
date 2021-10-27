@@ -1,50 +1,54 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
 
+
+
 let handleUserLogin = (email, password) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let userData = {};
-
 			let isExist = await checkUserEmail(email);
 			if (isExist) {
 				//user already exist
 				let user = await db.User.findOne({
+					attributes: ['email', 'roleId', 'password'],
 					where: { email: email },
-					attributes: [
-						'email', 'roleId', 'password'
-					],
-					raw: true
-					// attributes: {
-					// 	include: ['email', 'roleId']
-					// }
+					raw: true,
+
 				});
 				if (user) {
-					//compare password
-					let check = await bcrypt.compareSync(password, user.password); // false
+					//compare password: dùng cách 1 hay cách 2 đều chạy đúng cả =))
+					// Cách 1: dùng asynchronous (bất đồng bộ)
+					let check = await bcrypt.compare(password, user.password);
+
+
+					// Cách 2: dùng synchronous  (đồng bộ)
+					// let check = bcrypt.compareSync(password, user.password);
+
 					if (check) {
 						userData.errCode = 0;
-						userData.errMessage = 'Ok'
-						console.log(user)
+						userData.errMessage = 'OK';
+
 						delete user.password;
-						userData.user = user
-					} else {
+						userData.user = user;
+					}
+					else {
 						userData.errCode = 3;
-						userData.errMessage = `Wrong password. Please try!!`;
+						userData.errMessage = 'Wrong password';
 					}
 				} else {
 					userData.errCode = 2;
-					userData.errMessage = `User is not exist. Please try!!`;
-
+					userData.errMessage = `User not found`;
 				}
+
 			} else {
 				//return error
 				userData.errCode = 1;
-				userData.errMessage = `Your's Email isn't exist. Please try!!`;
-				resolve(userData)
+				userData.errMessage = `Your's Email isn't exist in our system, plz try other email`
 			}
+			resolve(userData); // resolve phải đặt ở đây, lỗi đặt resolve ở hàng trên trong else
 		} catch (e) {
-			reject(e)
+			reject(e);
 		}
 	})
 }
@@ -60,11 +64,15 @@ let checkUserEmail = (userEmail) => {
 			} else {
 				resolve(false)
 			}
+
 		} catch (e) {
 			reject(e)
 		}
 	})
 }
+
+
+
 module.exports = {
-	handleUserLogin: handleUserLogin
+	handleUserLogin: handleUserLogin,
 }
