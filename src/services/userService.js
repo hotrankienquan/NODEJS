@@ -110,6 +110,7 @@ let getALlUsers = (userId) => {
 		}
 	})
 }
+//ben frontend se goi toi ham nay de tao user
 let createNewUser = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -118,24 +119,26 @@ let createNewUser = (data) => {
 			if (check === true) {
 				resolve({
 					errCode: 1,
-					message: 'Your email is already in used, plz try again'
+					errMessage: 'Your email is already in used, plz try again'
 				})
 			}
-			// let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-			await db.User.create({
-				email: data.email,
-				password: data.password,
-				firstName: data.firstName,
-				lastName: data.lastName,
-				address: data.address,
-				phonenumber: data.phonenumber,
-				gender: data.gender === '1' ? true : false,
-				roleId: data.roleId
-			})
-			resolve({
-				errCode: 0,
-				message: 'OK'
-			})
+			else {
+				// let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+				await db.User.create({
+					email: data.email,
+					password: data.password,
+					firstName: data.firstName,
+					lastName: data.lastName,
+					address: data.address,
+					phonenumber: data.phonenumber,
+					gender: data.gender === '1' ? true : false,
+					roleId: data.roleId
+				})
+				resolve({
+					errCode: 0,
+					errMessage: 'OK'
+				})
+			}
 
 		} catch (e) {
 			reject(e)
