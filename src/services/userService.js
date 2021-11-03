@@ -111,6 +111,7 @@ let getALlUsers = (userId) => {
 	})
 }
 //ben frontend se goi toi ham nay de tao user
+// ham createNewUser nay mình đã ko hash password
 let createNewUser = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -206,10 +207,35 @@ let updateUserData = (data) => {
 		}
 	})
 }
+let getAllCodeService = (typeInput) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!typeInput) {
+				resolve({
+					errCode: 1,
+					errMessage: 'Missing required parameters'
+				})
+			} else {
+
+				let res = {};
+				let allcode = await db.Allcode.findAll({
+					where: { type: typeInput }
+				});
+				res.errCode = 0;
+				res.data = allcode; // append data từ db ra vào object rỗng để trả về controller
+				resolve(res);
+			}
+		} catch (e) {
+			reject(e)
+			// khi bi loi chay vao day bị reject thì nó sẽ trả về catch exception bên userController
+		}
+	})
+}
 module.exports = {
 	handleUserLogin: handleUserLogin,
 	getALlUsers: getALlUsers,
 	createNewUser: createNewUser,
 	deleteUser: deleteUser,
-	updateUserData: updateUserData
+	updateUserData: updateUserData,
+	getAllCodeService: getAllCodeService
 }
