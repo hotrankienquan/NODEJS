@@ -1,3 +1,4 @@
+import { reject } from 'bcrypt/promises';
 import db from '../models/index';
 
 //ben service se return new Promise
@@ -27,6 +28,54 @@ let getTopDoctorHome =(limitInput) => {
 		}
 	})
 }
+let getAllDoctors =() => {
+	return new Promise(async(resolve, reject) => {
+		try {
+			let doctors =  await db.User.findAll({
+				where: {roleId: 'R2'},
+				attributes: {
+					exclude: ['password', 'image']
+				}
+			})
+			//trong promise dung resolve
+			resolve({
+				errCode: 0,
+				data: doctors
+			})
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+let saveDetailInforDoctor =(inputData) => {
+	return new Promise(async(resolve, reject) => {
+		try {
+			if(!inputData.doctorId || !inputData.contentHTML
+				|| !inputData.contentMarkdown){
+				resolve({
+					errCode: 1,
+					errMessage: 'missing paramaters'
+				})
+			}else {
+				await db.Markdown.create({
+					contentHTML: inputData.contentHTML,
+					contentMarkdown: inputData.contentMarkdown,
+					description: inputData.description,
+					doctorId: inputData.doctorId
+				})
+				resolve({
+					errCode:0,
+					errMessage: 'save infor doctor succeed!'
+				})
+			}
+			
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
 module.exports = {
-	getTopDoctorHome : getTopDoctorHome
+	getTopDoctorHome : getTopDoctorHome,
+	getAllDoctors:getAllDoctors,
+	saveDetailInforDoctor:saveDetailInforDoctor
 }

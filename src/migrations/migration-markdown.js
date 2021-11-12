@@ -25,21 +25,21 @@ module.exports = {
 			type: Sequelize.INTEGER
 		},
 		specialtyId: {
-			allowNull: false,
+			allowNull: true,
 			type: Sequelize.INTEGER
 		},
 		clinicId: {
-			allowNull: false,
+			allowNull: true,
 			type: Sequelize.INTEGER
 		},
-			createdAt: {
-				allowNull: false,
-				type: Sequelize.DATE
-			},
-			updatedAt: {
-				allowNull: false,
-				type: Sequelize.DATE
-			}
+		createdAt: {
+			allowNull: false,
+			type: Sequelize.DATE
+		},
+		updatedAt: {
+			allowNull: false,
+			type: Sequelize.DATE
+		}
 		});
 	},
 	down: async (queryInterface, Sequelize) => {
