@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 		//associate moi quan he
 		static associate(models) {
 			// define association here
+			// Allcode.hasMany nen foreign key la cua thz User
 			Allcode.hasMany(models.User ,{foreignKey: 'positionId', as: 'positionData'})
 			Allcode.hasMany(models.User, {foreignKey: 'gender', as: 'genderData'})
 		}
