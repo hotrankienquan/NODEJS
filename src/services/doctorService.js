@@ -89,7 +89,7 @@ let getDetailDoctorbyId =(inputId) => {
 						id: inputId
 					},
 					attributes: {
-						exclude: ['password', 'image']
+						exclude: ['password']
 					},
 					include: [
 						{
@@ -98,9 +98,15 @@ let getDetailDoctorbyId =(inputId) => {
 					},
 							{model: db.Allcode, as:'positionData', attributes:['valueVi', 'valueEn']}
 					],
-					raw: true,
+					raw: false,
 					nest: true
 				})
+				// convert anh sang base64 tra ve client
+				if(data && data.image){
+					data.image =  Buffer.from(data.image, 'base64').toString('binary');
+ 
+				}
+				if(!data) data ={};
 				resolve({
 					errCode: 0,
 					data: data
