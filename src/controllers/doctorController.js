@@ -1,7 +1,7 @@
 import doctorService from '../services/doctorService';
 let getTopDoctorHome = async (req, res) => {
 	let limit = req.query.limit;
-	if(!limit) limit = 10; 
+	if (!limit) limit = 10;
 	try {
 		let response = await doctorService.getTopDoctorHome(+limit);// +limit: convert string sang number
 		return res.status(200).json(response)
@@ -13,9 +13,9 @@ let getTopDoctorHome = async (req, res) => {
 		})
 	}
 }
-let getAllDoctors =async(req, res) => {
+let getAllDoctors = async (req, res) => {
 	try {
-		let doctors =await doctorService.getAllDoctors();
+		let doctors = await doctorService.getAllDoctors();
 		return res.status(200).json(doctors);
 	} catch (error) {
 		console.log(e)
@@ -25,10 +25,22 @@ let getAllDoctors =async(req, res) => {
 		})
 	}
 }
-let postInforDoctor = async(req, res) => {
+let postInforDoctor = async (req, res) => {
 	try {
-		let response =await doctorService.saveDetailInforDoctor(req.body);
+		let response = await doctorService.saveDetailInforDoctor(req.body);
 		return res.status(200).json(response);
+	} catch (error) {
+		console.log(error)
+		return res.status(200).json({
+			errCode: -1,
+			errMessage: 'error from the server'
+		})
+	}
+}
+let bulkCreateSchedule = async (req, res) => {
+	try {
+		// controller dai ka, de het moi viec cho thz service lo
+		let infor = await doctorService.bulkCreateSchedule(req.body)
 	} catch (error) {
 		console.log(error)
 		return res.status(200).json({
@@ -39,8 +51,8 @@ let postInforDoctor = async(req, res) => {
 }
 let getDetailDoctorbyId = async (req, res) => {
 	try {
-	
-		let infor =await doctorService.getDetailDoctorbyId(req.query.id);
+
+		let infor = await doctorService.getDetailDoctorbyId(req.query.id);
 		return res.status(200).json(infor);
 	} catch (error) {
 		console.log(error)
@@ -53,6 +65,7 @@ let getDetailDoctorbyId = async (req, res) => {
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
-	postInforDoctor:postInforDoctor,
-	getDetailDoctorbyId:getDetailDoctorbyId
+	postInforDoctor: postInforDoctor,
+	getDetailDoctorbyId: getDetailDoctorbyId,
+	bulkCreateSchedule: bulkCreateSchedule
 }

@@ -1,6 +1,7 @@
-import { reject } from 'bcrypt/promises';
 import db from '../models/index';
-
+require('dotenv').config();
+import _ from 'lodash';
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 //ben service se return new Promise
 let getTopDoctorHome = (limitInput) => {
 	return new Promise(async (resolve, reject) => {
@@ -135,9 +136,63 @@ let getDetailDoctorbyId = (inputId) => {
 		}
 	})
 }
+// req.body ben controller truyen qua, ben nay nhan dc cuc data
+let bulkCreateSchedule = (data) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			// doctorId: selectedDoctor.value,
+			// 	date: formatedDate
+			if (!data.arrSchedule || !data.doctorId || !data.date) {
+				resolve({
+					errCode: 1,
+					errMessage: 'Missing parameters'
+				})
+			} else {
+				let schedule = data.arrSchedule;
+				if (schedule && schedule.length > 0) {
+
+					schedule = schedule.map(item => {
+						item.maxNumber = MAX_NUMBER_SCHEDULE;
+						return item;
+					})
+				}
+				console.log('data send qua serive', schedule)
+
+				let existing = await db.Schedule.findAll({
+					where: { doctorId: data.doctorId, date: data.date },
+					attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
+					raw: true
+				});
+				// convert date 
+				if (existing && existing.length > 0) {
+					existing = existing.map(item => {
+						item.date = new Date(item.date).getTime();
+
+						return item;
+					})
+				}
+				let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+					return a.timeType === b.timeType && a.date === b.date;
+				})
+				if (toCreate && toCreate.length > 0) {
+					await db.Schedule.bulkCreate(toCreate);
+				}
+				console.log(' check difference', toCreate)
+
+				resolve({
+					errCode: 0,
+					errMessage: 'OK'
+				})
+			}
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
 	saveDetailInforDoctor: saveDetailInforDoctor,
-	getDetailDoctorbyId: getDetailDoctorbyId
+	getDetailDoctorbyId: getDetailDoctorbyId,
+	bulkCreateSchedule: bulkCreateSchedule
 }

@@ -13,7 +13,7 @@ let hashUserPassword = (password) => {
 		}
 	})
 }
-
+// xu li login 
 let handleUserLogin = (email, password) => {
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -37,11 +37,11 @@ let handleUserLogin = (email, password) => {
 					// let check = bcrypt.compareSync(password, user.password);
 
 					// if (check) {
-						userData.errCode = 0;
-						userData.errMessage = 'OK';
+					userData.errCode = 0;
+					userData.errMessage = 'OK';
 
-						delete user.password;
-						userData.user = user;
+					delete user.password;
+					userData.user = user;
 					// }
 					// else {
 					// 	userData.errCode = 3;
@@ -192,7 +192,7 @@ let updateUserData = (data) => {
 				user.roleId = data.roleId;
 				user.gender = data.gender;
 				user.phonenumber = data.phonenumber;
-				if(data.avatar) {
+				if (data.avatar) {
 
 					user.image = data.avatar;
 				}
