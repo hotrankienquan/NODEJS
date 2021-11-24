@@ -41,6 +41,7 @@ let bulkCreateSchedule = async (req, res) => {
 	try {
 		// controller dai ka, de het moi viec cho thz service lo
 		let infor = await doctorService.bulkCreateSchedule(req.body)
+		return res.status(200).json(infor)
 	} catch (error) {
 		console.log(error)
 		return res.status(200).json({
@@ -62,10 +63,26 @@ let getDetailDoctorbyId = async (req, res) => {
 		})
 	}
 }
+let getScheduleByDate = async (req, res) => {
+	try {
+		// method get: truyen query de lay cac tham so tren url vd: ?id=4
+
+		let infor = await doctorService.getScheduleByDate(req.query.doctorId, req.query.date);
+		console.log('kuri', infor)
+		return res.status(200).json(infor);
+	} catch (error) {
+		console.log(error)
+		return res.status(200).json({
+			errCode: -1,
+			errMessage: 'error from the server'
+		})
+	}
+}
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
 	postInforDoctor: postInforDoctor,
 	getDetailDoctorbyId: getDetailDoctorbyId,
-	bulkCreateSchedule: bulkCreateSchedule
+	bulkCreateSchedule: bulkCreateSchedule,
+	getScheduleByDate: getScheduleByDate
 }

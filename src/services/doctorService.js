@@ -142,6 +142,7 @@ let bulkCreateSchedule = (data) => {
 		try {
 			// doctorId: selectedDoctor.value,
 			// 	date: formatedDate
+			console.log('check date from bulk create schedule nodejs', data)
 			if (!data.arrSchedule || !data.doctorId || !data.date) {
 				resolve({
 					errCode: 1,
@@ -189,10 +190,40 @@ let bulkCreateSchedule = (data) => {
 		}
 	})
 }
+let getScheduleByDate = (doctorId, date) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			console.log('check from doctor service', date)
+			if (!doctorId || !date) {
+				resolve({
+					errCode: 1,
+					errMessage: "Missing paramaters"
+				})
+			} else {
+				let dataFindDb = await db.Schedule.findAll({
+					where: {
+						// key db: key truyen vao
+						doctorId: doctorId,
+						date: date
+					},
+				})
+				if (!dataFindDb) dataFindDb = [];
+				resolve({
+					errCode: 0,
+					data: dataFindDb
+				})
+
+			}
+		} catch (e) {
+			reject(e);
+		}
+	})
+}
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
 	saveDetailInforDoctor: saveDetailInforDoctor,
 	getDetailDoctorbyId: getDetailDoctorbyId,
-	bulkCreateSchedule: bulkCreateSchedule
+	bulkCreateSchedule: bulkCreateSchedule,
+	getScheduleByDate: getScheduleByDate
 }
