@@ -164,21 +164,18 @@ let bulkCreateSchedule = (data) => {
 					attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
 					raw: true
 				});
-				// convert date 
-				if (existing && existing.length > 0) {
-					existing = existing.map(item => {
-						item.date = new Date(item.date).getTime();
 
-						return item;
-					})
-				}
+				console.log('check exisitng', existing)
+				console.log('check exisitng', schedule)
+				// a = '5';
+				// b = +a; // => b = 5
 				let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-					return a.timeType === b.timeType && a.date === b.date;
+					return a.timeType === b.timeType && +a.date === +b.date;
 				})
 				if (toCreate && toCreate.length > 0) {
 					await db.Schedule.bulkCreate(toCreate);
 				}
-				console.log(' check difference', toCreate)
+				// console.log(' check difference', toCreate)
 
 				resolve({
 					errCode: 0,
@@ -206,6 +203,12 @@ let getScheduleByDate = (doctorId, date) => {
 						doctorId: doctorId,
 						date: date
 					},
+					// lay valueVi valueEn gui len phia front de hien thi ra
+					include: [
+						{ model: db.Allcode, as: 'timeTypeData', attributes: ['valueVi', 'valueEn'] }
+					],
+					raw: false,
+					nest: true
 				})
 				if (!dataFindDb) dataFindDb = [];
 				resolve({
