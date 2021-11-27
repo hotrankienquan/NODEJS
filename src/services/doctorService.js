@@ -48,16 +48,26 @@ let getAllDoctors = () => {
 		}
 	})
 }
+/*     --------------------------------                          */
 let saveDetailInforDoctor = (inputData) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (!inputData.doctorId || !inputData.contentHTML
-				|| !inputData.contentMarkdown || !inputData.action) {
+
+			if (
+				!inputData.doctorId || !inputData.contentHTML
+				|| !inputData.contentMarkdown || !inputData.action
+
+				|| !inputData.selectedPrice || !inputData.selectedPayment
+				|| !inputData.selectedProvince
+				|| !inputData.nameClinic || !inputData.addressClinic
+				|| !inputData.note
+			) {
 				resolve({
 					errCode: 1,
 					errMessage: 'missing paramaters'
 				})
 			} else {
+				// update insert to Markdown
 				if (inputData.action === 'CREATE') {
 
 					await db.Markdown.create({
@@ -80,6 +90,44 @@ let saveDetailInforDoctor = (inputData) => {
 						await doctorMarkdown.save();
 					}
 				}
+				// upsert to doctor_infor table
+				let doctorInfor = await db.doctor_infor.findOne({
+					where: {
+						doctorId: inputData.doctorId,
+
+					},
+					raw: false
+				})
+				// await findOne tra ra object neu tim thay
+
+				// || !inputData.selectedPrice || !inputData.selectedPayment
+				// || !inputData.selectedProvince
+				// || !inputData.nameClinic || !inputData.addressClinic
+				// || !inputData.note
+				if (doctorInfor) {
+					// update
+					doctorInfor.priceId = inputData.selectedPrice
+					doctorInfor.provinceId = inputData.selectedProvince
+					doctorInfor.paymentId = inputData.selectedPayment
+
+					doctorInfor.addressClinic = inputData.addressClinic
+					doctorInfor.nameClinic = inputData.nameClinic
+					doctorInfor.note = inputData.note
+					await doctorInfor.save();
+				}
+				else {
+					//create
+					await db.doctor_infor.create({
+						priceId: inputData.selectedPrice,
+						provinceId: inputData.selectedProvince,
+						paymentId: inputData.selectedPayment,
+
+						addressClinic: inputData.addressClinic,
+						nameClinic: inputData.nameClinic,
+						note: inputData.note
+					})
+
+				}
 				resolve({
 					errCode: 0,
 					errMessage: 'save infor doctor succeed!'
@@ -91,6 +139,8 @@ let saveDetailInforDoctor = (inputData) => {
 		}
 	})
 }
+/*     --------------------------------                          */
+
 let getDetailDoctorbyId = (inputId) => {
 	return new Promise(async (resolve, reject) => {
 		try {

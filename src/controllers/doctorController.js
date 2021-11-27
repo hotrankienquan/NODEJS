@@ -25,6 +25,7 @@ let getAllDoctors = async (req, res) => {
 		})
 	}
 }
+
 let postInforDoctor = async (req, res) => {
 	try {
 		let response = await doctorService.saveDetailInforDoctor(req.body);
@@ -37,6 +38,7 @@ let postInforDoctor = async (req, res) => {
 		})
 	}
 }
+
 let bulkCreateSchedule = async (req, res) => {
 	try {
 		// controller dai ka, de het moi viec cho thz service lo
