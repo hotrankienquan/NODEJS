@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 		count: DataTypes.INTEGER,
 	}, {
 		sequelize,
-		modelName: 'doctor_infor',
+		modelName: 'Doctor_Infor',
 		freezeTableName: true
 	});
 	return Doctor_Infor;

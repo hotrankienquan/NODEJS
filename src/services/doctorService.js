@@ -90,8 +90,8 @@ let saveDetailInforDoctor = (inputData) => {
 						await doctorMarkdown.save();
 					}
 				}
-				// upsert to doctor_infor table
-				let doctorInfor = await db.doctor_infor.findOne({
+				// upsert to Doctor_Infor table
+				let doctorInfor = await db.Doctor_Infor.findOne({
 					where: {
 						doctorId: inputData.doctorId,
 
@@ -106,6 +106,7 @@ let saveDetailInforDoctor = (inputData) => {
 				// || !inputData.note
 				if (doctorInfor) {
 					// update
+					doctorInfor.doctorId = inputData.doctorId;
 					doctorInfor.priceId = inputData.selectedPrice
 					doctorInfor.provinceId = inputData.selectedProvince
 					doctorInfor.paymentId = inputData.selectedPayment
@@ -117,7 +118,8 @@ let saveDetailInforDoctor = (inputData) => {
 				}
 				else {
 					//create
-					await db.doctor_infor.create({
+					await db.Doctor_Infor.create({
+						doctorId: inputData.doctorId,
 						priceId: inputData.selectedPrice,
 						provinceId: inputData.selectedProvince,
 						paymentId: inputData.selectedPayment,
@@ -163,7 +165,10 @@ let getDetailDoctorbyId = (inputId) => {
 							model: db.Markdown,
 							attributes: ['description', 'contentHTML', 'contentMarkdown']
 						},
-						{ model: db.Allcode, as: 'positionData', attributes: ['valueVi', 'valueEn'] }
+						{
+							model: db.Allcode, as: 'positionData', attributes: ['valueVi', 'valueEn']
+						}
+
 					],
 					raw: false,
 					nest: true
