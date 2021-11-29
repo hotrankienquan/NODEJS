@@ -1,6 +1,6 @@
 import db from '../models/index';
 require('dotenv').config();
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 //ben service se return new Promise
 let getTopDoctorHome = (limitInput) => {
@@ -289,11 +289,50 @@ let getScheduleByDate = (doctorId, date) => {
 		}
 	})
 }
+let getExtraInforDoctorById = (doctorId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!doctorId) {
+				resolve({
+					errCode: 1,
+					errMessage: 'missing required parameters'
+				})
+			} else {
+				//choc toi modelName cua model doctor_info la  Doctor_Infor
+				let dataFindDb = await db.Doctor_Infor.findOne({
+					where: {
+						doctorId: doctorId
+					},
+					attributes: {
+						exclude: ['id', 'doctorId']
+					},
+					include: [
+						{ model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi', 'valueEn'] },
+						{ model: db.Allcode, as: 'provinceTypeData', attributes: ['valueVi', 'valueEn'] },
+						{ model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi', 'valueEn'] }
+
+					],
+					raw: false,
+					nest: true
+				})
+
+				if (!dataFindDb) data = [];
+				resolve({
+					errCode: 0,
+					data: dataFindDb
+				})
+			}
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
 	saveDetailInforDoctor: saveDetailInforDoctor,
 	getDetailDoctorbyId: getDetailDoctorbyId,
 	bulkCreateSchedule: bulkCreateSchedule,
-	getScheduleByDate: getScheduleByDate
+	getScheduleByDate: getScheduleByDate,
+	getExtraInforDoctorById
 }

@@ -80,11 +80,27 @@ let getScheduleByDate = async (req, res) => {
 		})
 	}
 }
+let getExtraInforDoctorById = async (req, res) => {
+	try {
+		// method get: truyen query de lay cac tham so tren url vd: ?id=4
+		// tuc la phia client se truyen req la doctorId cho nodejs
+		let infor = await doctorService.getExtraInforDoctorById(req.query.doctorId);
+		console.log('kuri', infor)
+		return res.status(200).json(infor);
+	} catch (error) {
+		console.log(error)
+		return res.status(200).json({
+			errCode: -1,
+			errMessage: 'error from the server'
+		})
+	}
+}
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
 	postInforDoctor: postInforDoctor,
 	getDetailDoctorbyId: getDetailDoctorbyId,
 	bulkCreateSchedule: bulkCreateSchedule,
-	getScheduleByDate: getScheduleByDate
+	getScheduleByDate: getScheduleByDate,
+	getExtraInforDoctorById: getExtraInforDoctorById
 }
