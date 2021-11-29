@@ -209,7 +209,7 @@ let bulkCreateSchedule = (data) => {
 		try {
 			// doctorId: selectedDoctor.value,
 			// 	date: formatedDate
-			console.log('check date from bulk create schedule nodejs', data)
+			// console.log('check date from bulk create schedule nodejs', data)
 			if (!data.arrSchedule || !data.doctorId || !data.date) {
 				resolve({
 					errCode: 1,
@@ -224,7 +224,7 @@ let bulkCreateSchedule = (data) => {
 						return item;
 					})
 				}
-				console.log('data send qua serive', schedule)
+				// console.log('data send qua serive', schedule)
 
 				let existing = await db.Schedule.findAll({
 					where: { doctorId: data.doctorId, date: data.date },
@@ -232,8 +232,8 @@ let bulkCreateSchedule = (data) => {
 					raw: true
 				});
 
-				console.log('check exisitng', existing)
-				console.log('check exisitng', schedule)
+				// console.log('check exisitng', existing)
+				// console.log('check exisitng', schedule)
 				// a = '5';
 				// b = +a; // => b = 5
 				let toCreate = _.differenceWith(schedule, existing, (a, b) => {
@@ -257,7 +257,6 @@ let bulkCreateSchedule = (data) => {
 let getScheduleByDate = (doctorId, date) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			console.log('check from doctor service', date)
 			if (!doctorId || !date) {
 				resolve({
 					errCode: 1,
@@ -327,6 +326,63 @@ let getExtraInforDoctorById = (doctorId) => {
 		}
 	})
 }
+let getProfileDoctorById = (inputId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!inputId) {
+				resolve({
+					errCode: 1,
+					errMessage: 'missing required parameters'
+				})
+			} else {
+				let data = await db.User.findOne({
+					where: {
+						id: inputId
+					},
+					attributes: {
+						exclude: ['password']
+					},
+					include: [
+						{
+							model: db.Markdown,
+							attributes: ['description', 'contentHTML', 'contentMarkdown']
+						},
+						{
+							model: db.Allcode, as: 'positionData', attributes: ['valueVi', 'valueEn']
+						},
+						{
+							model: db.Doctor_Infor,
+							attributes: {
+
+								exclude: ['id', 'doctorId']
+							},
+							include: [
+								{ model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi', 'valueEn'] },
+								{ model: db.Allcode, as: 'provinceTypeData', attributes: ['valueVi', 'valueEn'] },
+								{ model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi', 'valueEn'] }
+							]
+						},
+
+					],
+					raw: false,
+					nest: true
+				})
+				// convert anh sang base64 tra ve client
+				if (data && data.image) {
+					data.image = Buffer.from(data.image, 'base64').toString('binary');
+
+				}
+				if (!data) data = {};
+				resolve({
+					errCode: 0,
+					data: data
+				})
+			}
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -334,5 +390,6 @@ module.exports = {
 	getDetailDoctorbyId: getDetailDoctorbyId,
 	bulkCreateSchedule: bulkCreateSchedule,
 	getScheduleByDate: getScheduleByDate,
-	getExtraInforDoctorById
+	getExtraInforDoctorById,
+	getProfileDoctorById
 }

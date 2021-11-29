@@ -70,7 +70,7 @@ let getScheduleByDate = async (req, res) => {
 		// method get: truyen query de lay cac tham so tren url vd: ?id=4
 
 		let infor = await doctorService.getScheduleByDate(req.query.doctorId, req.query.date);
-		console.log('kuri', infor)
+		// console.log('kuri', infor)
 		return res.status(200).json(infor);
 	} catch (error) {
 		console.log(error)
@@ -85,6 +85,21 @@ let getExtraInforDoctorById = async (req, res) => {
 		// method get: truyen query de lay cac tham so tren url vd: ?id=4
 		// tuc la phia client se truyen req la doctorId cho nodejs
 		let infor = await doctorService.getExtraInforDoctorById(req.query.doctorId);
+		// console.log('kuri', infor)
+		return res.status(200).json(infor);
+	} catch (error) {
+		console.log(error)
+		return res.status(200).json({
+			errCode: -1,
+			errMessage: 'error from the server'
+		})
+	}
+}
+let getProfileDoctorById = async (req, res) => {
+	try {
+		// method get: truyen query de lay cac tham so tren url vd: ?id=4
+		// tuc la phia client se truyen req la doctorId cho nodejs
+		let infor = await doctorService.getProfileDoctorById(req.query.doctorId);
 		console.log('kuri', infor)
 		return res.status(200).json(infor);
 	} catch (error) {
@@ -102,5 +117,6 @@ module.exports = {
 	getDetailDoctorbyId: getDetailDoctorbyId,
 	bulkCreateSchedule: bulkCreateSchedule,
 	getScheduleByDate: getScheduleByDate,
-	getExtraInforDoctorById: getExtraInforDoctorById
+	getExtraInforDoctorById: getExtraInforDoctorById,
+	getProfileDoctorById
 }
