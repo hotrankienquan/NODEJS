@@ -1,5 +1,6 @@
 import db from '../models/index';
 require('dotenv').config();
+import emailService from './emailService'
 let postAppointment = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -10,6 +11,13 @@ let postAppointment = (data) => {
 				})
 
 			} else {
+				await emailService.sendSimpleEmail({
+					receiverEmail: data.email,
+					patientName: 'kien quan',
+					time: '8:00 -9:00 chủ nhật 1/8/2021',
+					doctorName: 'hoang thuy linh',
+					redirectLink: 'https://www.facebook.com/ricute222'
+				})
 				// 	fullName: this.state.fullName,
 				// phoneNumber: this.state.phoneNumber,
 				// email: this.state.email,
