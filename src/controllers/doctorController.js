@@ -100,7 +100,7 @@ let getProfileDoctorById = async (req, res) => {
 		// method get: truyen query de lay cac tham so tren url vd: ?id=4
 		// tuc la phia client se truyen req la doctorId cho nodejs
 		let infor = await doctorService.getProfileDoctorById(req.query.doctorId);
-		console.log('kuri', infor)
+		// console.log('kuri', infor)
 		return res.status(200).json(infor);
 	} catch (error) {
 		console.log(error)

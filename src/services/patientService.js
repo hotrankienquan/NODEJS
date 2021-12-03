@@ -10,11 +10,23 @@ let postAppointment = (data) => {
 				})
 
 			} else {
+				// 	fullName: this.state.fullName,
+				// phoneNumber: this.state.phoneNumber,
+				// email: this.state.email,
+				// passEmail: this.state.passEmail,
+
+				// address: this.state.address,
+				// reason: this.state.reason,
+				// birthday: this.state.birthday,
+
+				// selectedGender: '',
+				// doctorId: this.state.doctorId
 				//upsert patient
 				let user = await db.User.findOrCreate({
 					where: { email: data.email },
 					defaults: {
 						email: data.email,
+						password: data.passEmail,
 						roleId: 'R3'
 					},
 				});
