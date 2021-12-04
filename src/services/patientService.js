@@ -1,11 +1,19 @@
 import db from '../models/index';
 require('dotenv').config();
+
 import emailService from './emailService'
+import { v4 as uuidv4 } from 'uuid';
+
+let buildUrlEmail = (doctorId, token) => {
+
+	let result = `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}`
+	return result
+}
 let postAppointment = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			if (!data.email || !data.doctorId || !data.timeType || !data.date
-				|| !data.fullName
+				|| !data.fullName || !data.passEmail
 			) {
 				resolve({
 					errCode: 1,
@@ -13,6 +21,7 @@ let postAppointment = (data) => {
 				})
 
 			} else {
+				let token = uuidv4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
 
 				await emailService.sendSimpleEmail({
 					receiverEmail: data.email,
@@ -20,7 +29,7 @@ let postAppointment = (data) => {
 					time: data.timeString,
 					doctorName: data.doctorName,
 					language: data.language,
-					redirectLink: 'https://www.facebook.com/ricute222'
+					redirectLink: buildUrlEmail(data.doctorId, token)
 				})
 				// 	fullName: this.state.fullName,
 				// phoneNumber: this.state.phoneNumber,
@@ -52,6 +61,7 @@ let postAppointment = (data) => {
 							doctorId: data.doctorId,
 							date: data.date,
 							timeType: data.timeType,
+							token: token
 						}
 					})
 				}
@@ -65,6 +75,45 @@ let postAppointment = (data) => {
 		}
 	})
 }
+let postVerifyBookAppointment = (data) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!data.token || !data.doctorId) {
+				resolve({
+					errCode: 1,
+					errMessage: 'Missing parameters'
+				})
+			} else {
+				let apppointment = await db.Booking.findOne({
+					where: {
+						doctorId: data.doctorId,
+						token: data.token,
+						statusId: 'S1'
+					},
+					raw: false // tra ra 1 sequelize object
+					//raw: true  // tra ra 1 object cua javascript
+				})
+
+				if (apppointment) {
+					apppointment.statusId = 'S2'
+					await apppointment.save();//ham save thi gan statusId truoc
+					resolve({
+						errCode: 0,
+						errMessage: "Update appointment succeed"
+					})
+				} else {
+					resolve({
+						errCode: 2,
+						errMessage: "Appointment has been actived or does not exist"
+					})
+				}
+			}
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
 module.exports = {
-	postAppointment
+	postAppointment,
+	postVerifyBookAppointment
 }
