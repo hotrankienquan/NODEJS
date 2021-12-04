@@ -28,6 +28,31 @@ let createNewSpe = (data) => {
 		}
 	})
 }
+let getAllSpe = () => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let data = await db.Specialty.findAll()
+			if (data && data.length > 0) {
+				// html chi hieu duoc string, ko hieu dc binary duoi database
+				data.map(item => {
+
+					item.image = Buffer.from(item.image, 'base64').toString('binary');
+					return item;
+				})
+
+			}
+			resolve({
+				errCode: 0,
+				errMessage: 'ok',
+				data
+			})
+
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
 module.exports = {
 	createNewSpe
+	, getAllSpe
 }
