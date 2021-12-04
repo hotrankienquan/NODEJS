@@ -20,7 +20,17 @@ let sendSimpleEmail = async (dataSend) => {
 		to: dataSend.receiverEmail, // list of receivers
 		subject: "Thông tin đặt lịch khám bệnh", // Subject line
 		// text: "Hello world?", // plain text body
-		html: `
+		html: getBodyHTMLEmail(dataSend),
+	});
+}
+
+let getBodyHTMLEmail = (dataSend) => {
+	let result = ''
+	if (dataSend.language === 'vi') {
+		result =
+
+			`
+
 		<h3>Xin chào ${dataSend.patientName}!</h3>
 		<p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Kiến Quân app</p>
 		<p>Thông tin đặt lịch khám bệnh:</p>
@@ -33,18 +43,27 @@ let sendSimpleEmail = async (dataSend) => {
 		target="_blank"
 		>Click here!!</a></div>
 		<div>Xin chân thành cảm ơn bạn</div>
-		`,
-	});
+		`
+	}
+	if (dataSend.language === 'en') {
+		result =
+			`
+
+		<h3>Dear ${dataSend.patientName}!</h3>
+		<p>You received this email for booking an online medical examination on the Ant Quan app</p>
+		<p>Information on medical appointments:</p>
+		<div><b>Time: ${dataSend.time}</b></div>
+		<div><b>Doctor: ${dataSend.doctorName}</b></div>
+
+		<p>If the above information is correct, please click on the link below to confirm and complete the procedure of booking a medical appointment</p>
+		<div><a href=${dataSend.redirectLink}
+		target="_blank"
+		>Click here!!</a></div>
+		<div>Thank you sincerely.</div>
+		`
+	}
+	return result
 }
-
-// // async..await is not allowed in global scope, must use a wrapper
-// async function main() {
-
-
-
-
-
-// }
 module.exports = {
 	sendSimpleEmail
 }
